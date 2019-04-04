@@ -74,6 +74,7 @@ void mmult_hw (AXI_VAL in_stream[IS_SIZE], AXI_VAL out_stream[OS_SIZE])
 			// Perform the dot product
 			T tmp = offset_buf[j];
 			L3: for(int k = 0; k < FEAT; k++) {
+#pragma HLS PIPELINE II=1
 				tmp += in_buf[i][k] * weight_buf[j][k];
 			}
 			out_buf[i][j] = tmp;
