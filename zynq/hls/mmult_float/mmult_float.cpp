@@ -44,6 +44,7 @@ void mmult_hw (AXI_VAL in_stream[IS_SIZE], AXI_VAL out_stream[OS_SIZE])
 	// Stream in weight matrix
 	LOAD_W_1: for (int i = 0; i < CLASSES; i++) {
 		LOAD_W_2: for (int j = 0; j < FEAT; j+=WIDTH_RATIO) {
+#pragma HLS PIPELINE II=1
 			// Pop AXI data packet
 			converter.packet = pop_stream(in_stream[is_idx++]);
 			weight_buf[i][j+0]  = converter.val.f0;
@@ -55,6 +56,7 @@ void mmult_hw (AXI_VAL in_stream[IS_SIZE], AXI_VAL out_stream[OS_SIZE])
 	// Stream in input matrix
 	LOAD_I_1: for (int i = 0; i < BATCH; i++) {
 		LOAD_I_2: for (int j = 0; j < FEAT; j+=WIDTH_RATIO) {
+#pragma HLS PIPELINE II=1
 			// Pop AXI data packet
 			converter.packet = pop_stream(in_stream[is_idx++]);
 			in_buf[i][j+0]  = converter.val.f0;
@@ -66,6 +68,7 @@ void mmult_hw (AXI_VAL in_stream[IS_SIZE], AXI_VAL out_stream[OS_SIZE])
 	L1: for (int i = 0; i < BATCH; i++) {
 		// Iterate over output classes
 		L2: for (int j = 0; j < CLASSES; j++) {
+#pragma HLS PIPELINE II=1
 			// Perform the dot product
 			T tmp = offset_buf[j];
 			L3: for(int k = 0; k < FEAT; k++) {
@@ -78,6 +81,7 @@ void mmult_hw (AXI_VAL in_stream[IS_SIZE], AXI_VAL out_stream[OS_SIZE])
 	// Stream out output matrix
 	STORE_O_1: for (int i = 0; i < BATCH; i++) {
 		STORE_O_2: for (int j = 0; j < CLASSES; j+=WIDTH_RATIO) {
+#pragma HLS PIPELINE II=1
 			// Push output element into AXI stream
 			converter.val.f0 = out_buf[i][j+0];
 			converter.val.f1 = out_buf[i][j+1];
